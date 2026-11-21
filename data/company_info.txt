@@ -1,0 +1,17 @@
+Company Overview - TechNova Solutions
+
+TechNova Solutions is a leading AI and software company founded in 2018, headquartered in Bangalore, India. 
+We specialize in building intelligent systems, RAG applications, computer vision, and enterprise software.
+
+Key Products:
+1. NovaRAG - Our flagship Retrieval-Augmented Generation platform for enterprise knowledge bases.
+2. VisionAI - Computer vision solutions for manufacturing quality control.
+3. AutoML Suite - Automated machine learning platform for non-experts.
+
+Team Size: 250+ employees
+Founders: Dr. Ananya Sharma (CEO), Rajesh Kumar (CTO)
+Annual Revenue (2025): $45 Million
+Clients: 120+ companies across India, Singapore, and Middle East.
+
+Mission: To democratize AI and make advanced intelligence accessible to every business.
+Vision: Become the most trusted AI partner for enterprises in Asia by 2030.
