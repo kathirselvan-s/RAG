@@ -60,7 +60,7 @@ def check_ollama():
         import ollama
         client = ollama.Client(host=OLLAMA_BASE_URL)
         response = client.list()
-        console.print("[green]✓ Connected to Ollama server[/green]")
+        console.print("[green][OK] Connected to Ollama server[/green]")
         return [model.model for model in response.models]
     except Exception as e:
         console.print(f"[red]Ollama connection error: {e!r}[/red]")
@@ -79,7 +79,7 @@ def ensure_models(models: List[str]):
         if base not in available:
             console.print(f"[yellow]Pulling model {model} ... this may take a while[/yellow]")
             client.pull(model)
-            console.print(f"[green]✓ {model} ready[/green]")
+            console.print(f"[green][OK] {model} ready[/green]")
 
 
 def load_documents(data_dir: Path) -> List:
@@ -118,9 +118,9 @@ def load_documents(data_dir: Path) -> List:
                 d.metadata["source"] = str(file_path.relative_to(data_dir))
                 d.metadata["filename"] = file_path.name
             documents.extend(docs)
-            console.print(f"  ✓ Loaded: {file_path.name}")
+            console.print(f"  [OK] Loaded: {file_path.name}")
         except Exception as e:
-            console.print(f"  [red]✗ Failed {file_path.name}: {e}[/red]")
+            console.print(f"  [red][FAILED] {file_path.name}: {e}[/red]")
 
     return documents
 
@@ -182,7 +182,7 @@ def build_or_load_vectorstore(chunks: Optional[List] = None, force_rebuild: bool
         collection_name=COLLECTION_NAME,
         persist_directory=str(PERSIST_DIR),
     )
-    console.print(f"[green]✓ Indexed {len(chunks)} chunks into ChromaDB[/green]")
+    console.print(f"[green][OK] Indexed {len(chunks)} chunks into ChromaDB[/green]")
     return vectorstore
 
 
@@ -256,7 +256,7 @@ def interactive_chat(chain, retriever):
             chunks = split_documents(docs)
             vectorstore = build_or_load_vectorstore(chunks, force_rebuild=True)
             chain, retriever = create_rag_chain(vectorstore)
-            console.print("[green]✓ Knowledge base updated![/green]")
+            console.print("[green][OK] Knowledge base updated![/green]")
             continue
 
         if question.strip().lower().startswith("/sources"):

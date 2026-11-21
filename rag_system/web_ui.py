@@ -4,9 +4,11 @@ Web UI for the RAG Chatbot using Gradio.
 Run: python web_ui.py
 """
 
-import gradio as gr
-from pathlib import Path
+import inspect
 import sys
+from pathlib import Path
+
+import gradio as gr
 
 # Import from the main script
 sys.path.insert(0, str(Path(__file__).parent))
@@ -39,14 +41,21 @@ def initialize():
 
 
 def chat(message, history):
+    history = history or []
+    messages = history + [{"role": "user", "content": message}]
+
     if chain is None:
-        return history + [[message, "System not initialized. Please wait..."]]
+        return messages + [{
+            "role": "assistant",
+            "content": "System not initialized. Please wait...",
+        }]
+
     try:
         answer = chain.invoke(message)
-        history.append([message, answer])
     except Exception as e:
-        history.append([message, f"Error: {str(e)}"])
-    return history
+        answer = f"Error: {e}"
+
+    return messages + [{"role": "assistant", "content": answer}]
 
 
 def reindex():
@@ -58,7 +67,18 @@ def reindex():
     return "✓ Knowledge base re-indexed successfully!"
 
 
-with gr.Blocks(title="TechNova RAG Chatbot", theme=gr.themes.Soft()) as demo:
+blocks_options = {"title": "TechNova RAG Chatbot"}
+launch_options = {
+    "server_name": "127.0.0.1",
+    "server_port": 7860,
+    "share": False,
+}
+if "theme" in inspect.signature(gr.Blocks).parameters:
+    blocks_options["theme"] = gr.themes.Soft()
+elif "theme" in inspect.signature(gr.Blocks.launch).parameters:
+    launch_options["theme"] = gr.themes.Soft()
+
+with gr.Blocks(**blocks_options) as demo:
     gr.Markdown(f"""
     # 🧠 TechNova Knowledge Chatbot
     Powered by **{LLM_MODEL}** + RAG  
@@ -69,7 +89,10 @@ with gr.Blocks(title="TechNova RAG Chatbot", theme=gr.themes.Soft()) as demo:
         status = gr.Textbox(label="Status", value="Initializing...", interactive=False)
         reindex_btn = gr.Button("🔄 Re-index Knowledge Base", variant="secondary")
 
-    chatbot = gr.Chatbot(label="Chat", height=500)
+    chatbot_options = {"label": "Chat", "height": 500}
+    if "type" in inspect.signature(gr.Chatbot).parameters:
+        chatbot_options["type"] = "messages"
+    chatbot = gr.Chatbot(**chatbot_options)
     msg = gr.Textbox(label="Your question", placeholder="Ask anything about the documents...")
     clear = gr.Button("Clear")
 
@@ -80,4 +103,4 @@ with gr.Blocks(title="TechNova RAG Chatbot", theme=gr.themes.Soft()) as demo:
     clear.click(lambda: None, None, chatbot, queue=False)
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=7860, share=False)
+    demo.launch(**launch_options)
